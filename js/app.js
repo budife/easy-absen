@@ -185,16 +185,15 @@ function importFromXlsx(file, callback) {
       // Skip header row
       const data = rows.slice(1).filter(r => r.length > 0 && r[0]);
       const parsed = data.map(row => ({
-        name: String(row[0] || '').trim(),
-        date: formatDateYYYYMMDD(String(row[1] || '')),
-        startTime: String(row[2] || '').trim(),
-        endTime: String(row[3] || '').trim(),
-        totalHours: parseFloat(row[4]) || calcTotalHours(String(row[2]||''), String(row[3]||'')),
-        activity: String(row[5] || '').trim(),
-        project: String(row[6] || '').trim(),
-        category: String(row[7] || 'weekday').trim().toLowerCase(),
-        baseSalary: parseFloat(row[8]) || 0,
-        pay: parseFloat(row[9]) || 0
+        date: formatDateYYYYMMDD(String(row[0] || '')),
+        startTime: String(row[1] || '').trim(),
+        endTime: String(row[2] || '').trim(),
+        totalHours: parseFloat(row[3]) || calcTotalHours(String(row[1]||''), String(row[2]||'')),
+        activity: String(row[4] || '').trim(),
+        project: String(row[5] || '').trim(),
+        category: String(row[6] || 'weekday').trim().toLowerCase(),
+        baseSalary: parseFloat(row[7]) || 0,
+        pay: parseFloat(row[8]) || 0
       }));
       callback(null, parsed);
     } catch (err) {
@@ -204,25 +203,19 @@ function importFromXlsx(file, callback) {
   reader.readAsArrayBuffer(file);
 }
 
-// --- Export data for xlsx ---
-function prepareExportData(overtimeList, employees) {
-  const empMap = {};
-  employees.forEach(e => { empMap[e.id] = e; });
-  return overtimeList.map(o => {
-    const emp = empMap[o.employeeId] || {};
-    return {
-      'Nama': emp.name || o.employeeName || '',
-      'Tanggal': o.date,
-      'Jam Mulai': o.startTime,
-      'Jam Selesai': o.endTime,
-      'Total Jam': o.totalHours,
-      'Aktivitas': o.activity,
-      'Project': o.project,
-      'Kategori': o.category,
-      'Gaji Pokok': o.baseSalary || 0,
-      'Uang Lembur': o.pay || 0
-    };
-  });
+// --- Export data for xlsx (simple, no employees) ---
+function prepareExportDataSimple(overtimeList) {
+  return overtimeList.map(o => ({
+    'Tanggal': o.date,
+    'Jam Mulai': o.startTime,
+    'Jam Selesai': o.endTime,
+    'Total Jam': o.totalHours,
+    'Aktivitas': o.activity,
+    'Project': o.project,
+    'Kategori': o.category,
+    'Gaji Pokok': o.baseSalary || 0,
+    'Uang Lembur': o.pay || 0
+  }));
 }
 
 // Init nav on load

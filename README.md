@@ -30,7 +30,7 @@ Aplikasi web sederhana untuk tracking lemburan (overtime) karyawan. Input lembur
 ## Import/Export XLSX
 
 Format kolom (header row):
-| Nama | Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lembur |
+| Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lembur |
 
 - Tanggal format: `YYYYMMDD` (contoh: 20261026)
 - Kategori: `weekday`, `weekend`, `holiday`

@@ -20,7 +20,6 @@
         <li><a href="kalender.html">Kalender</a></li>
         <li><a href="riwayat.html">Riwayat</a></li>
         <li><a href="import.html">Import/Export</a></li>
-        <li><a href="karyawan.html">Karyawan</a></li>
         <li><a href="settings.html">Settings</a></li>
       </ul>
     </aside>
@@ -48,7 +47,6 @@
           <table>
             <thead>
               <tr>
-                <th>Nama</th>
                 <th>Tanggal</th>
                 <th>Jam</th>
                 <th>Total</th>
@@ -104,9 +102,7 @@
 
       document.getElementById('tbody').innerHTML = pageData.length
         ? pageData.map(o => {
-            const emp = empMap[o.employeeId] || {};
             return `<tr>
-              <td>${emp.name || o.employeeName || '-'}</td>
               <td>${formatDateDisplay(o.date)}</td>
               <td>${o.startTime}-${o.endTime}</td>
               <td>${(o.totalHours||0).toFixed(2)}</td>
@@ -120,7 +116,7 @@
               </td>
             </tr>`;
           }).join('')
-        : '<tr><td colspan="9" class="empty-state">Tidak ada data</td></tr>';
+        : '<tr><td colspan="8" class="empty-state">Tidak ada data</td></tr>';
 
       // Pagination
       let pagHtml = '';
@@ -204,8 +200,7 @@
 
     function exportFiltered() {
       const data = getFiltered();
-      const employees = getEmployees();
-      const exportData = prepareExportData(data, employees);
+      const exportData = prepareExportDataSimple(data);
       exportToXlsx(exportData, 'lembur-filtered-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.xlsx');
       showToast('Exported', 'success');
     }

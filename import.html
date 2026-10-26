@@ -20,7 +20,6 @@
         <li><a href="kalender.html">Kalender</a></li>
         <li><a href="riwayat.html">Riwayat</a></li>
         <li><a href="import.html">Import/Export</a></li>
-        <li><a href="karyawan.html">Karyawan</a></li>
         <li><a href="settings.html">Settings</a></li>
       </ul>
     </aside>
@@ -36,7 +35,7 @@
 
       <div class="card" style="margin-bottom:24px;">
         <h3 style="margin-bottom:12px;">Import dari XLSX</h3>
-        <p style="color:var(--text-muted);margin-bottom:12px;">Upload file xlsx dengan format kolom: Nama, Tanggal, Jam Mulai, Jam Selesai, Total Jam, Aktivitas, Project, Kategori, Gaji Pokok, Uang Lembur</p>
+        <p style="color:var(--text-muted);margin-bottom:12px;">Upload file xlsx dengan format kolom: Tanggal, Jam Mulai, Jam Selesai, Total Jam, Aktivitas, Project, Kategori, Gaji Pokok, Uang Lembur</p>
         <input type="file" id="fileInput" accept=".xlsx,.xls" class="form-control" style="margin-bottom:12px;">
         <div id="preview" style="margin-bottom:12px;"></div>
         <button class="btn btn-primary" onclick="doImport()" id="importBtn" disabled>Import</button>
@@ -69,42 +68,27 @@
         // Preview
         const preview = document.getElementById('preview');
         preview.innerHTML = `<p><strong>${data.length} baris</strong> ditemukan. Preview 5 baris pertama:</p>
-          <div class="table-container"><table><thead><tr><th>Nama</th><th>Tanggal</th><th>Jam</th><th>Total</th><th>Kategori</th></tr></thead>
-          <tbody>${data.slice(0,5).map(r => `<tr><td>${r.name}</td><td>${formatDateDisplay(r.date)}</td><td>${r.startTime}-${r.endTime}</td><td>${r.totalHours}</td><td>${r.category}</td></tr>`).join('')}</tbody></table></div>`;
+          <div class="table-container"><table><thead><tr><th>Tanggal</th><th>Jam</th><th>Total</th><th>Kategori</th></tr></thead>
+          <tbody>${data.slice(0,5).map(r => `<tr><td>${formatDateDisplay(r.date)}</td><td>${r.startTime}-${r.endTime}</td><td>${r.totalHours}</td><td>${r.category}</td></tr>`).join('')}</tbody></table></div>`;
         document.getElementById('importBtn').disabled = false;
       });
     });
 
     function doImport() {
       if (!parsedImport) return;
-      const employees = getEmployees();
-      const empMap = {};
-      employees.forEach(e => { empMap[e.name.toLowerCase()] = e; });
-
       const existing = getOvertime();
-      const existingKeys = new Set(existing.map(o => o.employeeName + '|' + o.date + '|' + o.startTime));
-      let inserted = 0, skipped = 0, newEmps = 0;
+      const existingKeys = new Set(existing.map(o => o.date + '|' + o.startTime));
+      let inserted = 0, skipped = 0;
 
       parsedImport.forEach(row => {
-        const key = row.name + '|' + row.date + '|' + row.startTime;
+        const key = row.date + '|' + row.startTime;
         if (existingKeys.has(key)) { skipped++; return; }
-
-        // Auto-create employee if not exists
-        let emp = empMap[row.name.toLowerCase()];
-        if (!emp) {
-          emp = { id: genId(), name: row.name, department: '', createdAt: new Date().toISOString() };
-          employees.push(emp);
-          empMap[row.name.toLowerCase()] = emp;
-          newEmps++;
-        }
 
         const settings = getSettings();
         const pay = row.pay || calcOvertimePay(row.totalHours, row.category, row.baseSalary || settings.baseSalary);
 
         existing.push({
           id: genId(),
-          employeeId: emp.id,
-          employeeName: row.name,
           date: row.date,
           startTime: row.startTime,
           endTime: row.endTime,
@@ -120,9 +104,8 @@
         inserted++;
       });
 
-      saveEmployees(employees);
       saveOvertime(existing);
-      showToast(`Import selesai: ${inserted} inserted, ${skipped} skipped, ${newEmps} karyawan baru`, 'success');
+      showToast(`Import selesai: ${inserted} inserted, ${skipped} skipped`, 'success');
       parsedImport = null;
       document.getElementById('preview').innerHTML = '';
       document.getElementById('importBtn').disabled = true;
@@ -131,8 +114,7 @@
 
     function exportAll() {
       const data = getOvertime();
-      const employees = getEmployees();
-      const exportData = prepareExportData(data, employees);
+      const exportData = prepareExportDataSimple(data);
       exportToXlsx(exportData, 'lembur-all-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.xlsx');
       showToast('Exported ' + data.length + ' baris', 'success');
     }
@@ -174,10 +156,10 @@
 
     function downloadTemplate() {
       const ws = XLSX.utils.aoa_to_sheet([
-        ['Nama', 'Tanggal', 'Jam Mulai', 'Jam Selesai', 'Total Jam', 'Aktivitas', 'Project', 'Kategori', 'Gaji Pokok', 'Uang Lembur'],
-        ['Budi Santoso', '20261026', '18:00', '21:00', 3, 'Deploy server production', 'Infra', 'weekday', 5000000, 0]
+        ['Tanggal', 'Jam Mulai', 'Jam Selesai', 'Total Jam', 'Aktivitas', 'Project', 'Kategori', 'Gaji Pokok', 'Uang Lembur'],
+        ['20261026', '18:00', '21:00', 3, 'Deploy server production', 'Infra', 'weekday', 5000000, 0]
       ]);
-      ws['!cols'] = [{wch:20},{wch:12},{wch:10},{wch:10},{wch:10},{wch:40},{wch:20},{wch:12},{wch:12},{wch:12}];
+      ws['!cols'] = [{wch:12},{wch:10},{wch:10},{wch:10},{wch:40},{wch:20},{wch:12},{wch:12},{wch:12}];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Template');
       XLSX.writeFile(wb, 'template-lembur.xlsx');

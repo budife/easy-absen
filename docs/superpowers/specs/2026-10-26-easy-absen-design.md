@@ -149,9 +149,7 @@ Pain point yang diselesaikan:
 - Generate xlsx dengan header styling, auto-width, freeze header
 - Download file: `lembur-YYYY-MM-DD.xlsx`
 
-### 8.6 Kelola Karyawan
-- CRUD karyawan (nama, department)
-- Search by nama
+### 8.6 Kelola Karyawan — REMOVED (single user, no employee concept)
 
 ### 8.7 Settings
 - Nama line manager (untuk approval)

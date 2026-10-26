@@ -1,0 +1,17 @@
+{
+  "name": "Easy Absen",
+  "short_name": "Easy Absen",
+  "description": "Tracker lembur pribadi",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#d9d0c3",
+  "theme_color": "#7c6f5b",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='24' fill='%237c6f5b'/><text x='96' y='120' font-size='80' text-anchor='middle' fill='%23f2efe9' font-family='sans-serif' font-weight='600'>EA</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}

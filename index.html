@@ -7,7 +7,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=21">
+  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
   <style>
     .view { display: none; }
@@ -303,55 +305,84 @@
       months.push({ label, hours });
     }
     const maxH = Math.max(...months.map(m => m.hours), 1);
-    document.getElementById('chart-monthly').innerHTML = months.map(m => `
+    const hasData = months.some(m => m.hours > 0);
+    document.getElementById('chart-monthly').innerHTML = hasData ? months.map(m => `
       <div class="chart-bar">
         <div class="label">${m.label}</div>
         <div class="bar-bg"><div class="bar-fill" style="width:${(m.hours/maxH*100)}%"></div></div>
         <div class="value">${m.hours.toFixed(1)}j</div>
       </div>
-    `).join('');
+    `).join('') : '<div class="empty-state">Belum ada data lembur. Catat lembur pertama Anda!</div>';
     const cats = { weekday: 0, weekend: 0, holiday: 0 };
     thisMonth.forEach(o => { cats[o.category] = (cats[o.category]||0) + (o.totalHours||0); });
     const catTotal = Object.values(cats).reduce((a,b) => a+b, 0) || 1;
     const catLabels = { weekday: 'Hari Kerja', weekend: 'Akhir Pekan', holiday: 'Libur' };
-    document.getElementById('chart-category').innerHTML = Object.entries(cats).map(([k,v]) => `
+    const hasCatData = Object.values(cats).some(v => v > 0);
+    document.getElementById('chart-category').innerHTML = hasCatData ? Object.entries(cats).map(([k,v]) => `
       <div class="chart-bar">
         <div class="label">${catLabels[k]}</div>
         <div class="bar-bg"><div class="bar-fill" style="width:${(v/catTotal*100)}%;background:${k==='weekday'?'#2563eb':k==='weekend'?'#f59e0b':'#ec4899'}"></div></div>
         <div class="value">${v.toFixed(1)}j</div>
       </div>
-    `).join('');
+    `).join('') : '<div class="empty-state">Belum ada data kategori bulan ini.</div>';
   }
 
   // --- Input Form ---
   function initInputForm() {
-    document.getElementById('date').value = new Date().toISOString().slice(0,10);
+    // Restore draft
+    const draft = localStorage.getItem('ea_draft');
+    if (draft) {
+      try {
+        const d = JSON.parse(draft);
+        if (d.date) document.getElementById('date').value = d.date;
+        if (d.category) document.getElementById('category').value = d.category;
+        if (d.startTime) document.getElementById('startTime').value = d.startTime;
+        if (d.endTime) document.getElementById('endTime').value = d.endTime;
+        if (d.activity) document.getElementById('activity').value = d.activity;
+        if (d.project) document.getElementById('project').value = d.project;
+        if (d.rate) document.getElementById('rate').value = d.rate;
+        calcTotalHours();
+      } catch(e) {}
+    } else {
+      document.getElementById('date').value = new Date().toISOString().slice(0,10);
+    }
+    // Auto-save draft on input
+    ['date','category','startTime','endTime','activity','project','rate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', saveDraft);
+    });
     const form = document.getElementById('overtimeForm');
     if (form) {
       form.onsubmit = function(e) {
         e.preventDefault();
+        const startTime = document.getElementById('startTime').value;
+        const endTime = document.getElementById('endTime').value;
+        const date = document.getElementById('date').value;
+        // Validation
+        if (!date) { toast('Tanggal harus diisi', 'error'); return; }
+        if (!startTime || !endTime) { toast('Jam mulai dan selesai harus diisi', 'error'); return; }
+        const [sh, sm] = startTime.split(':').map(Number);
+        const [eh, em] = endTime.split(':').map(Number);
+        let total = (eh + em/60) - (sh + sm/60);
+        if (total < 0) total += 24;
+        if (total === 0) { toast('Jam selesai harus berbeda dari jam mulai', 'error'); return; }
+        if (total > 24) { toast('Durasi tidak valid', 'error'); return; }
         const entry = {
           id: genId(),
-          date: document.getElementById('date').value.replace(/-/g,''),
+          date: date.replace(/-/g,''),
           category: document.getElementById('category').value,
-          startTime: document.getElementById('startTime').value,
-          endTime: document.getElementById('endTime').value,
+          startTime: startTime,
+          endTime: endTime,
           activity: document.getElementById('activity').value,
           project: document.getElementById('project').value,
           rate: parseFloat(document.getElementById('rate').value) || 0,
-          totalHours: 0,
-          pay: 0
+          totalHours: total,
+          pay: total * (parseFloat(document.getElementById('rate').value) || 0)
         };
-        // Calculate total hours
-        const [sh, sm] = entry.startTime.split(':').map(Number);
-        const [eh, em] = entry.endTime.split(':').map(Number);
-        let total = (eh + em/60) - (sh + sm/60);
-        if (total < 0) total += 24;
-        entry.totalHours = total;
-        entry.pay = total * entry.rate;
         const data = getOvertime();
         data.push(entry);
         saveOvertime(data);
+        localStorage.removeItem('ea_draft');
         toast('Lembur berhasil dicatat', 'success');
         resetForm();
       };
@@ -372,10 +403,23 @@
     if (total < 0) total += 24;
     document.getElementById('totalHours').value = total.toFixed(2);
   }
+function saveDraft() {
+  const draft = {
+    date: document.getElementById('date').value,
+    category: document.getElementById('category').value,
+    startTime: document.getElementById('startTime').value,
+    endTime: document.getElementById('endTime').value,
+    activity: document.getElementById('activity').value,
+    project: document.getElementById('project').value,
+    rate: document.getElementById('rate').value
+  };
+  localStorage.setItem('ea_draft', JSON.stringify(draft));
+}
   function resetForm() {
     document.getElementById('overtimeForm').reset();
     document.getElementById('date').value = new Date().toISOString().slice(0,10);
     document.getElementById('totalHours').value = '';
+    localStorage.removeItem('ea_draft');
   }
 
   // --- Calendar ---
@@ -621,6 +665,7 @@
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Overtime');
     XLSX.writeFile(wb, 'easy-absen-backup.xlsx');
+    localStorage.setItem('ea_last_backup', Date.now().toString());
     toast('Export berhasil', 'success');
   }
   function importData() {
@@ -645,6 +690,7 @@
     const a = document.createElement('a');
     a.href = url; a.download = 'easy-absen-backup.json';
     a.click(); URL.revokeObjectURL(url);
+    localStorage.setItem('ea_last_backup', Date.now().toString());
     toast('Export JSON berhasil', 'success');
   }
   function importJson(event) {
@@ -663,7 +709,24 @@
     reader.readAsText(file);
   }
 
-  // --- Helpers ---
+  // --- Keyboard shortcuts ---
+  document.addEventListener('keydown', function(e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'n' || e.key === 'N') { navigateTo('catat'); }
+    else if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(m => m.remove()); }
+    else if (e.key === 'ArrowLeft' && currentView === 'kalender') { prevPeriod(); }
+    else if (e.key === 'ArrowRight' && currentView === 'kalender') { nextPeriod(); }
+  });
+  // --- Backup reminder ---
+  (function() {
+    const lastBackup = localStorage.getItem('ea_last_backup');
+    const now = Date.now();
+    if (!lastBackup || (now - parseInt(lastBackup)) > 7 * 24 * 60 * 60 * 1000) {
+      setTimeout(() => {
+        toast('Belum backup 7 hari terakhir. Export data Anda.', 'warning');
+      }, 3000);
+    }
+  })();
   function formatDateDisplay(yyyymmdd) {
     if (!yyyymmdd || yyyymmdd.length !== 8) return yyyymmdd;
     const y = yyyymmdd.slice(0,4), m = yyyymmdd.slice(4,6), d = yyyymmdd.slice(6,8);
@@ -671,7 +734,10 @@
     return `${d} ${months[parseInt(m)-1]} ${y}`;
   }
   </script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+  </script>
 </body>
 </html>
-CSSEOF
-echo "Done"

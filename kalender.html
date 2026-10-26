@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy Absen — Kalender</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="libs/xlsx.full.min.js"></script>
+  <style>
+    .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-day-name { text-align: center; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); padding: 8px 0; }
+    .cal-day {
+      min-height: 80px; padding: 6px; border: 1px solid var(--border); border-radius: 6px;
+      background: #fff; font-size: 0.8rem; cursor: pointer; transition: background 0.15s;
+    }
+    .cal-day:hover { background: #f1f5f9; }
+    .cal-day.empty { background: var(--bg); cursor: default; }
+    .cal-day.today { border-color: var(--primary); }
+    .cal-day.has-ot { background: #eff6ff; }
+    .cal-day .day-num { font-weight: 600; margin-bottom: 4px; }
+    .cal-day .ot-badge {
+      display: inline-block; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;
+      background: var(--primary); color: #fff; margin-top: 2px;
+    }
+    .cal-day .ot-list { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+    .cal-nav { display: flex; gap: 8px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-brand">Easy <span>Absen</span></div>
+      <ul class="sidebar-nav">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="input.html">Input Lembur</a></li>
+        <li><a href="kalender.html">Kalender</a></li>
+        <li><a href="riwayat.html">Riwayat</a></li>
+        <li><a href="import.html">Import/Export</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+    </aside>
+    <main class="main">
+      <div class="page-header"><h1>Kalender Lembur</h1></div>
+
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="btn btn-outline btn-sm" onclick="prevMonth()">&laquo; Prev</button>
+          <button class="btn btn-outline btn-sm" onclick="goToday()">Hari Ini</button>
+          <button class="btn btn-outline btn-sm" onclick="nextMonth()">Next &raquo;</button>
+        </div>
+        <h2 id="monthLabel" style="font-size:1.2rem;"></h2>
+      </div>
+
+      <div class="card">
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+
+      <div id="dayDetail" style="margin-top:16px;"></div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+
+    const dayNames = ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'];
+
+    function renderCalendar() {
+      const label = new Date(currentYear, currentMonth).toLocaleString('id-ID', { month: 'long', year: 'numeric' });
+      document.getElementById('monthLabel').textContent = label;
+
+      const grid = document.getElementById('calGrid');
+      grid.innerHTML = '';
+
+      // Day names header
+      dayNames.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'cal-day-name';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+
+      const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const today = new Date();
+      const todayKey = today.getFullYear() + String(today.getMonth()+1).padStart(2,'0') + String(today.getDate()).padStart(2,'0');
+
+      // Empty cells before first day
+      for (let i = 0; i < firstDay; i++) {
+        const el = document.createElement('div');
+        el.className = 'cal-day empty';
+        grid.appendChild(el);
+      }
+
+      const overtime = getOvertime();
+      // Group by date
+      const byDate = {};
+      overtime.forEach(o => {
+        if (!byDate[o.date]) byDate[o.date] = [];
+        byDate[o.date].push(o);
+      });
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateKey = currentYear + String(currentMonth+1).padStart(2,'0') + String(d).padStart(2,'0');
+        const entries = byDate[dateKey] || [];
+        const totalH = entries.reduce((s,e) => s + (e.totalHours||0), 0);
+
+        const el = document.createElement('div');
+        el.className = 'cal-day' + (entries.length ? ' has-ot' : '') + (dateKey === todayKey ? ' today' : '');
+        el.innerHTML = `<div class="day-num">${d}</div>` +
+          (entries.length ? `<div class="ot-badge">${totalH.toFixed(1)}j</div><div class="ot-list">${entries.length} lembur</div>` : '');
+        el.onclick = () => showDayDetail(dateKey, entries);
+        grid.appendChild(el);
+      }
+    }
+
+    function showDayDetail(dateKey, entries) {
+      const detail = document.getElementById('dayDetail');
+      if (!entries || entries.length === 0) {
+        detail.innerHTML = '<div class="card"><p style="color:var(--text-muted);">Tidak ada lembur pada ' + formatDateDisplay(dateKey) + '</p></div>';
+        return;
+      }
+      const catLabels = { weekday: 'Hari Kerja', weekend: 'Akhir Pekan', holiday: 'Libur' };
+      detail.innerHTML = `<div class="card">
+        <h3 style="margin-bottom:12px;">Lembur ${formatDateDisplay(dateKey)}</h3>
+        <div class="table-container"><table>
+          <thead><tr><th>Jam</th><th>Total</th><th>Aktivitas</th><th>Project</th><th>Kategori</th><th>Uang</th></tr></thead>
+          <tbody>${entries.map(o => `
+            <tr>
+              <td>${o.startTime}-${o.endTime}</td>
+              <td>${(o.totalHours||0).toFixed(2)}</td>
+              <td>${o.activity||'-'}</td>
+              <td>${o.project||'-'}</td>
+              <td>${catLabels[o.category]||o.category}</td>
+              <td>${o.pay ? 'Rp '+o.pay.toLocaleString('id-ID') : '-'}</td>
+            </tr>
+          `).join('')}</tbody>
+        </table></div>
+      </div>`;
+    }
+
+    function prevMonth() {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    }
+
+    function nextMonth() {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
+    }
+
+    function goToday() {
+      currentYear = new Date().getFullYear();
+      currentMonth = new Date().getMonth();
+      renderCalendar();
+    }
+
+    renderCalendar();
+  </script>
+</body>
+</html>

@@ -330,8 +330,19 @@ td { font-variant-numeric: tabular-nums; }
 }
 .cal-day:hover { background: var(--bg-subtle); }
 .cal-day.other-month { background: var(--bg-subtle); opacity: 0.4; }
-.cal-day.today { background: #e8e3db; }
-.cal-day.today .day-num { color: var(--accent); font-weight: 600; }
+.cal-day.today { background: var(--bg-card); }
+.cal-day.today .day-num { 
+  color: #f2efe9; 
+  font-weight: 700; 
+  background: var(--accent); 
+  border-radius: 50%; 
+  width: 24px; 
+  height: 24px; 
+  display: inline-flex; 
+  align-items: center; 
+  justify-content: center; 
+  margin-left: auto;
+}
 .day-num { font-weight: 500; font-size: 14px; margin-bottom: 2px; text-align: right; }
 .cal-event {
   font-size: 11px; padding: 1px 4px; border-radius: 2px; margin-bottom: 2px;

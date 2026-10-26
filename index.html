@@ -46,7 +46,6 @@
   <script src="js/app.js"></script>
   <script>
     function renderDashboard() {
-      const employees = getEmployees();
       const overtime = getOvertime();
       const settings = getSettings();
       const now = new Date();
@@ -55,7 +54,6 @@
       // Filter this month
       const thisMonth = overtime.filter(o => o.date && o.date.slice(0,6) === currentMonth);
       const totalHours = thisMonth.reduce((s,o) => s + (o.totalHours||0), 0);
-      const uniqueEmp = new Set(thisMonth.map(o => o.employeeId)).size;
       const avgHours = thisMonth.length ? (totalHours / thisMonth.length).toFixed(1) : 0;
 
       document.getElementById('stats').innerHTML = `

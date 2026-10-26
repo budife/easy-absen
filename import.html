@@ -121,7 +121,6 @@
 
     function exportBackup() {
       const backup = {
-        employees: getEmployees(),
         overtime: getOvertime(),
         settings: getSettings(),
         exportedAt: new Date().toISOString()
@@ -143,7 +142,6 @@
       reader.onload = (e) => {
         try {
           const backup = JSON.parse(e.target.result);
-          if (backup.employees) saveEmployees(backup.employees);
           if (backup.overtime) saveOvertime(backup.overtime);
           if (backup.settings) saveSettings(backup.settings);
           showToast('Restore berhasil', 'success');

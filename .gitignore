@@ -1,3 +1,22 @@
-node_modules/
+# OS
 .DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
 *.log
+npm-debug.log*
+
+# Temp
+*.tmp
+*.temp
+*.cache
+*.swp
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+build/

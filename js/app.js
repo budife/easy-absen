@@ -2,7 +2,6 @@
 // Data stored in localStorage
 
 const STORAGE_KEYS = {
-  employees: 'ea_employees',
   overtime: 'ea_overtime',
   settings: 'ea_settings'
 };
@@ -27,9 +26,6 @@ function saveData(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-function getEmployees() { return loadData(STORAGE_KEYS.employees); }
-function saveEmployees(data) { saveData(STORAGE_KEYS.employees, data); }
-
 function getOvertime() { return loadData(STORAGE_KEYS.overtime); }
 function saveOvertime(data) { saveData(STORAGE_KEYS.overtime, data); }
 
@@ -47,21 +43,6 @@ function saveSettings(data) {
 // --- ID generator ---
 function genId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-}
-
-// Auto-create default employee if none exists
-function ensureDefaultEmployee() {
-  const emps = getEmployees();
-  if (emps.length === 0) {
-    emps.push({ id: 'self', name: 'Saya', department: '', createdAt: new Date().toISOString() });
-    saveEmployees(emps);
-  }
-  return emps[0];
-}
-
-function getSelfEmployee() {
-  const emps = getEmployees();
-  return emps.find(e => e.id === 'self') || emps[0] || ensureDefaultEmployee();
 }
 
 // --- Date helpers ---
@@ -83,11 +64,6 @@ function formatDateYYYYMMDD(dateStr) {
 function formatDateDisplay(yyyymmdd) {
   if (!yyyymmdd || yyyymmdd.length !== 8) return yyyymmdd;
   return yyyymmdd.slice(0,4) + '-' + yyyymmdd.slice(4,6) + '-' + yyyymmdd.slice(6,8);
-}
-
-function parseDate(yyyymmdd) {
-  if (!yyyymmdd || yyyymmdd.length !== 8) return null;
-  return new Date(yyyymmdd.slice(0,4), yyyymmdd.slice(4,6)-1, yyyymmdd.slice(6,8));
 }
 
 // --- Time helpers ---

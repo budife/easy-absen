@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=22">
+  <link rel="stylesheet" href="css/style.css?v=23">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -78,9 +78,7 @@
     navigateTo(hash);
   });
 
-  // Initial load
-  const initialHash = location.hash.replace('#', '') || 'ringkasan';
-  navigateTo(initialHash);
+  // Initial load handled after views are registered (see bottom of page)
   </script>
 
   <!-- View: Ringkasan -->
@@ -727,6 +725,12 @@ function saveDraft() {
       }, 3000);
     }
   })();
+  // --- Initial load (after all views registered) ---
+  (function() {
+    const hash = location.hash.replace('#', '') || 'ringkasan';
+    navigateTo(hash);
+  })();
+
   function formatDateDisplay(yyyymmdd) {
     if (!yyyymmdd || yyyymmdd.length !== 8) return yyyymmdd;
     const y = yyyymmdd.slice(0,4), m = yyyymmdd.slice(4,6), d = yyyymmdd.slice(6,8);

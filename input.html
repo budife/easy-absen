@@ -157,24 +157,29 @@
         return;
       }
 
+      const settings = getSettings();
+      const cat = document.getElementById('category').value;
+      const pay = calcOvertimePay(total, cat, settings.baseSalary);
+
       // Check if already has overtime on this date
       const existing = getOvertime().filter(o => o.date === dateKey);
       if (existing.length > 0) {
         const old = existing[0];
-        const msg = `Sudah ada lembur pada ${formatDateDisplay(dateKey)} (${old.startTime}-${old.endTime}, ${old.totalHours.toFixed(1)} jam). Timpa dengan data baru?`;
-        if (!confirm(msg)) {
-          // Offer to edit instead
-          showToast('Dibatalkan. Edit lembur lama di Riwayat.', 'info');
-          return;
-        }
-        // Remove old entry
-        const data = getOvertime().filter(o => o.id !== old.id);
-        saveOvertime(data);
+        // Show custom modal instead of browser confirm
+        showDuplicateModal(old, () => {
+          // User confirmed - proceed with save
+          proceedSave(dateKey, start, end, total, settings, cat, pay);
+        });
+        return;
       }
 
-      const settings = getSettings();
-      const cat = document.getElementById('category').value;
-      const pay = calcOvertimePay(total, cat, settings.baseSalary);
+      proceedSave(dateKey, start, end, total, settings, cat, pay);
+    }
+
+    function proceedSave(dateKey, start, end, total, settings, cat, pay) {
+      // Remove old entry if exists
+      const data = getOvertime().filter(o => o.date !== dateKey);
+      saveOvertime(data);
 
       const entry = {
         id: genId(),
@@ -190,11 +195,32 @@
         createdAt: new Date().toISOString()
       };
 
-      const data = getOvertime();
-      data.push(entry);
-      saveOvertime(data);
+      const allData = getOvertime();
+      allData.push(entry);
+      saveOvertime(allData);
       showToast('Lembur berhasil disimpan', 'success');
       resetForm();
+    }
+
+    function showDuplicateModal(old, onConfirm) {
+      const overlay = document.createElement('div');
+      overlay.className = 'modal-overlay';
+      overlay.innerHTML = `<div class="modal">
+        <h2>Sudah Ada Lembur</h2>
+        <p style="margin-bottom:12px;color:#475569;font-size:0.9rem;">
+          Tanggal <strong>${formatDateDisplay(old.date)}</strong> sudah ada lembur:<br>
+          <strong>${old.startTime} - ${old.endTime}</strong> (${old.totalHours.toFixed(1)} jam)${old.activity ? '<br>' + old.activity : ''}
+        </p>
+        <p style="margin-bottom:16px;color:#475569;font-size:0.9rem;">Timpa dengan data baru?</p>
+        <div class="modal-actions">
+          <button class="btn btn-outline" id="dupCancel">Batal</button>
+          <button class="btn btn-primary" id="dupConfirm">Timpa</button>
+        </div>
+      </div>`;
+      document.body.appendChild(overlay);
+      document.getElementById('dupCancel').onclick = () => overlay.remove();
+      document.getElementById('dupConfirm').onclick = () => { overlay.remove(); onConfirm(); };
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     }
 
     function resetForm() {

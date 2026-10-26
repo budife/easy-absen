@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  --bg: #f2efe9;
-  --bg-subtle: #e8e3db;
-  --bg-card: #faf8f4;
+  --bg: #e8e2d9;
+  --bg-subtle: #ddd6cc;
+  --bg-card: #f2efe9;
   --border: #d8d2c8;
   --border-subtle: #e4dfd6;
   --text: #2e2925;
@@ -174,12 +174,12 @@ body {
 
 .btn-primary {
   background: var(--accent);
-  color: #faf8f4;
+  color: #f2efe9;
   border-color: var(--accent);
 }
 .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
-.btn-success { background: var(--success); color: #faf8f4; border-color: var(--success); }
-.btn-danger { background: var(--danger); color: #faf8f4; border-color: var(--danger); }
+.btn-success { background: var(--success); color: #f2efe9; border-color: var(--success); }
+.btn-danger { background: var(--danger); color: #f2efe9; border-color: var(--danger); }
 .btn-outline { background: var(--bg-card); }
 .btn-sm { padding: 5px 10px; font-size: 13px; }
 
@@ -230,7 +230,7 @@ td { font-variant-numeric: tabular-nums; }
   right: 20px;
   padding: 10px 16px;
   border-radius: var(--radius-sm);
-  color: #faf8f4;
+  color: #f2efe9;
   font-size: 15px;
   z-index: 1000;
   animation: slideIn 120ms ease;
@@ -281,7 +281,7 @@ td { font-variant-numeric: tabular-nums; }
 /* Calendar */
 .cal-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
 .cal-view-btns { display: flex; gap: 4px; }
-.cal-view-btns .btn.active { background: var(--accent); color: #faf8f4; border-color: var(--accent); }
+.cal-view-btns .btn.active { background: var(--accent); color: #f2efe9; border-color: var(--accent); }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
 .cal-day-name { text-align: center; font-size: 12px; font-weight: 500; color: var(--text-muted); padding: 8px 4px; background: var(--bg-subtle); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); }
 .cal-day {

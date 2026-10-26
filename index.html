@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=23">
+  <link rel="stylesheet" href="css/style.css?v=24">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -365,6 +365,20 @@
         if (total < 0) total += 24;
         if (total === 0) { toast('Jam selesai harus berbeda dari jam mulai', 'error'); return; }
         if (total > 24) { toast('Durasi tidak valid', 'error'); return; }
+        // Duplicate check
+        const existing = getOvertime();
+        const dup = existing.find(o => o.date === date.replace(/-/g,'') && o.startTime === startTime && o.endTime === endTime);
+        if (dup) { toast('Lembur dengan jam yang sama sudah ada', 'error'); return; }
+        // Overlap check
+        const sameDay = existing.filter(o => o.date === date.replace(/-/g,''));
+        const overlap = sameDay.find(o => {
+          const [os, oe] = [o.startTime, o.endTime].map(t => { const [h,m] = t.split(':').map(Number); return h + m/60; });
+          const [ns, ne] = [startTime, endTime].map(t => { const [h,m] = t.split(':').map(Number); return h + m/60; });
+          return ns < oe && ne > os;
+        });
+        if (overlap) { toast('Waktu bertabrakan dengan lembur lain pada tanggal yang sama', 'error'); return; }
+        // Confirmation
+        if (!confirm(`Simpan lembur ${startTime}-${endTime} pada ${date}?`)) return;
         const entry = {
           id: genId(),
           date: date.replace(/-/g,''),

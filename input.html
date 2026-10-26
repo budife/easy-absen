@@ -140,21 +140,9 @@
       document.getElementById('payEstimate').value = pay > 0 ? 'Rp ' + pay.toLocaleString('id-ID') : '';
     }
 
-    document.getElementById('date').addEventListener('change', checkExistingOvertime);
     document.getElementById('category').addEventListener('change', updatePayEstimate);
     document.getElementById('startTime').addEventListener('change', updateTotal);
     document.getElementById('endTime').addEventListener('change', updateTotal);
-
-    function checkExistingOvertime() {
-      const dateVal = document.getElementById('date').value;
-      if (!dateVal) return;
-      const dateKey = formatDateYYYYMMDD(dateVal);
-      const existing = getOvertime().filter(o => o.date === dateKey);
-      if (existing.length > 0) {
-        const old = existing[0];
-        showToast(`Sudah ada lembur: ${old.startTime}-${old.endTime} (${old.totalHours.toFixed(1)} jam). Akan ditimpa.`, 'warning');
-      }
-    }
 
     function submitLembur(e) {
       e.preventDefault();

@@ -28,24 +28,14 @@
 
       <div class="card-grid" id="stats"></div>
 
-      <div class="card" style="margin-bottom:24px;">
+      <div class="card">
         <h3 style="margin-bottom:12px;">Lembur per Bulan (6 bulan terakhir)</h3>
         <div id="chart-monthly"></div>
       </div>
 
-      <div class="card" style="margin-bottom:24px;">
+      <div class="card" style="margin-top:24px;">
         <h3 style="margin-bottom:12px;">Distribusi Kategori</h3>
         <div id="chart-category"></div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-bottom:12px;">Top 5 Karyawan Lembur Bulan Ini</h3>
-        <div class="table-container">
-          <table>
-            <thead><tr><th>Nama</th><th>Total Jam</th><th>Jumlah Lembur</th></tr></thead>
-            <tbody id="top-employees"></tbody>
-          </table>
-        </div>
       </div>
     </main>
   </div>
@@ -68,8 +58,8 @@
       document.getElementById('stats').innerHTML = `
         <div class="card stat-card"><div class="value">${totalHours.toFixed(1)}</div><div class="label">Total Jam Bulan Ini</div></div>
         <div class="card stat-card"><div class="value">${thisMonth.length}</div><div class="label">Jumlah Lembur</div></div>
-        <div class="card stat-card"><div class="value">${uniqueEmp}</div><div class="label">Karyawan Lembur</div></div>
-        <div class="card stat-card"><div class="value">${avgHours}</div><div class="label">Rata-rata Jam/Lembur</div></div>
+        <div class="card stat-card"><div class="value">${totalHours > 0 ? (totalHours / thisMonth.length).toFixed(1) : 0}</div><div class="label">Rata-rata Jam</div></div>
+        <div class="card stat-card"><div class="value">${thisMonth.reduce((s,o) => s + (o.pay||0), 0).toLocaleString('id-ID')}</div><div class="label">Total Uang Lembur</div></div>
       `;
 
       // Monthly chart (last 6 months)
@@ -103,18 +93,7 @@
         </div>
       `).join('');
 
-      // Top employees
-      const empHours = {};
-      thisMonth.forEach(o => {
-        const name = (employees.find(e => e.id === o.employeeId) || {}).name || o.employeeName || 'Unknown';
-        if (!empHours[name]) empHours[name] = { hours: 0, count: 0 };
-        empHours[name].hours += o.totalHours || 0;
-        empHours[name].count++;
-      });
-      const sorted = Object.entries(empHours).sort((a,b) => b[1].hours - a[1].hours).slice(0,5);
-      document.getElementById('top-employees').innerHTML = sorted.length
-        ? sorted.map(([name, d]) => `<tr><td>${name}</td><td>${d.hours.toFixed(1)}</td><td>${d.count}</td></tr>`).join('')
-        : '<tr><td colspan="3" class="empty-state">Belum ada data bulan ini</td></tr>';
+      // Top employees (removed - single user)
     }
 
     renderDashboard();

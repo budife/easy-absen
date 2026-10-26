@@ -49,6 +49,21 @@ function genId() {
   return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
 }
 
+// Auto-create default employee if none exists
+function ensureDefaultEmployee() {
+  const emps = getEmployees();
+  if (emps.length === 0) {
+    emps.push({ id: 'self', name: 'Saya', department: '', createdAt: new Date().toISOString() });
+    saveEmployees(emps);
+  }
+  return emps[0];
+}
+
+function getSelfEmployee() {
+  const emps = getEmployees();
+  return emps.find(e => e.id === 'self') || emps[0] || ensureDefaultEmployee();
+}
+
 // --- Date helpers ---
 function formatDateYYYYMMDD(dateStr) {
   // Convert various formats to YYYYMMDD

@@ -29,7 +29,6 @@
       <div class="filter-bar">
         <input type="date" id="filterDateFrom" class="form-control" placeholder="Dari">
         <input type="date" id="filterDateTo" class="form-control" placeholder="Sampai">
-        <select id="filterEmp" class="form-control"><option value="">Semua Karyawan</option></select>
         <select id="filterCat" class="form-control">
           <option value="">Semua Kategori</option>
           <option value="weekday">Hari Kerja</option>
@@ -69,26 +68,16 @@
     let currentPage = 1;
     const perPage = 20;
 
-    function loadFilterEmps() {
-      const sel = document.getElementById('filterEmp');
-      getEmployees().forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e.id;
-        opt.textContent = e.name;
-        sel.appendChild(opt);
-      });
-    }
+    function loadFilterEmps() {}
 
     function getFiltered() {
       const from = document.getElementById('filterDateFrom').value;
       const to = document.getElementById('filterDateTo').value;
-      const empId = document.getElementById('filterEmp').value;
       const cat = document.getElementById('filterCat').value;
 
       let data = getOvertime();
       if (from) data = data.filter(o => o.date >= formatDateYYYYMMDD(from));
       if (to) data = data.filter(o => o.date <= formatDateYYYYMMDD(to));
-      if (empId) data = data.filter(o => o.employeeId === empId);
       if (cat) data = data.filter(o => o.category === cat);
 
       data.sort((a,b) => b.date.localeCompare(a.date) || b.startTime.localeCompare(a.startTime));

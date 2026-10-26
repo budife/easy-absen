@@ -27,14 +27,16 @@
         <form id="form-lembur" onsubmit="submitLembur(event)">
           <div class="form-row">
             <div class="form-group">
-              <label>Karyawan</label>
-              <select id="employee" class="form-control" required>
-                <option value="">-- Pilih Karyawan --</option>
-              </select>
-            </div>
-            <div class="form-group">
               <label>Tanggal</label>
               <input type="date" id="date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <select id="category" class="form-control">
+                <option value="weekday">Hari Kerja</option>
+                <option value="weekend">Akhir Pekan</option>
+                <option value="holiday">Libur</option>
+              </select>
             </div>
           </div>
           <div class="form-row">
@@ -60,14 +62,6 @@
               <label>Project</label>
               <input type="text" id="project" class="form-control" placeholder="Nama project">
             </div>
-            <div class="form-group">
-              <label>Kategori</label>
-              <select id="category" class="form-control">
-                <option value="weekday">Hari Kerja</option>
-                <option value="weekend">Akhir Pekan</option>
-                <option value="holiday">Libur</option>
-              </select>
-            </div>
           </div>
           <div class="form-group">
             <label>Estimasi Uang Lembur</label>
@@ -85,14 +79,7 @@
   <script src="js/app.js"></script>
   <script>
     function loadEmployees() {
-      const sel = document.getElementById('employee');
-      const emps = getEmployees();
-      emps.forEach(e => {
-        const opt = document.createElement('option');
-        opt.value = e.id;
-        opt.textContent = e.name + (e.department ? ' (' + e.department + ')' : '');
-        sel.appendChild(opt);
-      });
+      ensureDefaultEmployee();
     }
 
     function updateTotal() {
@@ -117,8 +104,7 @@
 
     function submitLembur(e) {
       e.preventDefault();
-      const empId = document.getElementById('employee').value;
-      const emp = getEmployees().find(x => x.id === empId);
+      const emp = getSelfEmployee();
       const dateVal = document.getElementById('date').value;
       const start = document.getElementById('startTime').value;
       const end = document.getElementById('endTime').value;
@@ -135,8 +121,8 @@
 
       const entry = {
         id: genId(),
-        employeeId: empId,
-        employeeName: emp ? emp.name : '',
+        employeeId: emp.id,
+        employeeName: emp.name,
         date: formatDateYYYYMMDD(dateVal),
         startTime: start,
         endTime: end,

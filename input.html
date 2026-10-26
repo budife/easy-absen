@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=5">
   <script src="libs/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -28,14 +28,31 @@
 
       <div class="card">
         <form id="form-lembur" onsubmit="submitLembur(event)">
-          <!-- Quick time presets -->
+          <!-- Quick start time -->
+          <div style="margin-bottom:12px;">
+            <label style="font-size:0.8rem;font-weight:500;color:var(--text-muted);display:block;margin-bottom:6px;">Jam Mulai Cepat</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('17:00')">17:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('17:30')">17:30</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('18:00')">18:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('18:30')">18:30</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('19:00')">19:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setStartTime('20:00')">20:00</button>
+            </div>
+          </div>
+
+          <!-- Quick end time -->
           <div style="margin-bottom:16px;">
-            <label style="font-size:0.85rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Jam Cepat</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(18,0,3)">18:00 → 21:00 (3j)</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(18,0,2)">18:00 → 20:00 (2j)</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(19,0,3)">19:00 → 22:00 (3j)</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(20,0,2)">20:00 → 22:00 (2j)</button>
+            <label style="font-size:0.8rem;font-weight:500;color:var(--text-muted);display:block;margin-bottom:6px;">Jam Selesai Cepat</label>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('18:00')">18:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('18:30')">18:30</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('19:00')">19:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('19:30')">19:30</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('20:00')">20:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('21:00')">21:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('22:00')">22:00</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setEndTime('23:00')">23:00</button>
             </div>
           </div>
 
@@ -61,18 +78,6 @@
             <div class="form-group">
               <label>Jam Selesai</label>
               <input type="time" id="endTime" class="form-control" required onchange="updateTotal()">
-            </div>
-          </div>
-
-          <!-- Duration quick buttons -->
-          <div style="margin-bottom:16px;">
-            <label style="font-size:0.85rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Durasi Cepat (dari jam mulai)</label>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(1)">+1 jam</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(2)">+2 jam</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(3)">+3 jam</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(4)">+4 jam</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(5)">+5 jam</button>
             </div>
           </div>
 
@@ -107,25 +112,13 @@
       ensureDefaultEmployee();
     }
 
-    function setTimePreset(startH, startM, durH) {
-      const start = String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0');
-      const endMin = startH * 60 + startM + durH * 60;
-      const endH = Math.floor(endMin / 60) % 24;
-      const endM = endMin % 60;
-      const end = String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0');
-      document.getElementById('startTime').value = start;
-      document.getElementById('endTime').value = end;
+    function setStartTime(time) {
+      document.getElementById('startTime').value = time;
       updateTotal();
     }
 
-    function setDuration(hours) {
-      const start = document.getElementById('startTime').value;
-      if (!start) { showToast('Set jam mulai dulu', 'error'); return; }
-      const [h, m] = start.split(':').map(Number);
-      const endMin = h * 60 + (m||0) + hours * 60;
-      const endH = Math.floor(endMin / 60) % 24;
-      const endM = endMin % 60;
-      document.getElementById('endTime').value = String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0');
+    function setEndTime(time) {
+      document.getElementById('endTime').value = time;
       updateTotal();
     }
 

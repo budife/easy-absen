@@ -26,6 +26,17 @@
 
       <div class="card">
         <form id="form-lembur" onsubmit="submitLembur(event)">
+          <!-- Quick time presets -->
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.85rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Jam Cepat</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(18,0,3)">18:00 → 21:00 (3j)</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(18,0,2)">18:00 → 20:00 (2j)</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(19,0,3)">19:00 → 22:00 (3j)</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setTimePreset(20,0,2)">20:00 → 22:00 (2j)</button>
+            </div>
+          </div>
+
           <div class="form-row">
             <div class="form-group">
               <label>Tanggal</label>
@@ -50,23 +61,34 @@
               <input type="time" id="endTime" class="form-control" required onchange="updateTotal()">
             </div>
           </div>
+
+          <!-- Duration quick buttons -->
+          <div style="margin-bottom:16px;">
+            <label style="font-size:0.85rem;font-weight:600;color:var(--text-muted);display:block;margin-bottom:8px;">Durasi Cepat (dari jam mulai)</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(1)">+1 jam</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(2)">+2 jam</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(3)">+3 jam</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(4)">+4 jam</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="setDuration(5)">+5 jam</button>
+            </div>
+          </div>
+
           <div class="form-group">
             <label>Total Jam</label>
-            <input type="text" id="totalHours" class="form-control" readonly style="background:var(--bg);">
+            <input type="text" id="totalHours" class="form-control" readonly style="background:var(--bg);font-size:1.2rem;font-weight:700;text-align:center;">
           </div>
           <div class="form-group">
             <label>Aktivitas / Deskripsi</label>
-            <textarea id="activity" class="form-control" rows="3" placeholder="Apa yang dikerjakan..."></textarea>
+            <textarea id="activity" class="form-control" rows="2" placeholder="Apa yang dikerjakan..."></textarea>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Project</label>
-              <input type="text" id="project" class="form-control" placeholder="Nama project">
-            </div>
+          <div class="form-group">
+            <label>Project</label>
+            <input type="text" id="project" class="form-control" placeholder="Nama project">
           </div>
           <div class="form-group">
             <label>Estimasi Uang Lembur</label>
-            <input type="text" id="payEstimate" class="form-control" readonly style="background:var(--bg);">
+            <input type="text" id="payEstimate" class="form-control" readonly style="background:var(--bg);font-weight:600;">
           </div>
           <div style="display:flex;gap:8px;">
             <button type="submit" class="btn btn-primary">Simpan Lembur</button>
@@ -81,6 +103,28 @@
   <script>
     function loadEmployees() {
       ensureDefaultEmployee();
+    }
+
+    function setTimePreset(startH, startM, durH) {
+      const start = String(startH).padStart(2,'0') + ':' + String(startM).padStart(2,'0');
+      const endMin = startH * 60 + startM + durH * 60;
+      const endH = Math.floor(endMin / 60) % 24;
+      const endM = endMin % 60;
+      const end = String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0');
+      document.getElementById('startTime').value = start;
+      document.getElementById('endTime').value = end;
+      updateTotal();
+    }
+
+    function setDuration(hours) {
+      const start = document.getElementById('startTime').value;
+      if (!start) { showToast('Set jam mulai dulu', 'error'); return; }
+      const [h, m] = start.split(':').map(Number);
+      const endMin = h * 60 + (m||0) + hours * 60;
+      const endH = Math.floor(endMin / 60) % 24;
+      const endM = endMin % 60;
+      document.getElementById('endTime').value = String(endH).padStart(2,'0') + ':' + String(endM).padStart(2,'0');
+      updateTotal();
     }
 
     function updateTotal() {
@@ -102,6 +146,8 @@
     }
 
     document.getElementById('category').addEventListener('change', updatePayEstimate);
+    document.getElementById('startTime').addEventListener('change', updateTotal);
+    document.getElementById('endTime').addEventListener('change', updateTotal);
 
     function submitLembur(e) {
       e.preventDefault();

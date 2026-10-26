@@ -195,4 +195,5 @@ function prepareExportDataSimple(overtimeList) {
 }
 
 // Init nav on load
-document.addEventListener('DOMContentLoaded', initNav);
+// Navigation handled by SPA router
+// document.addEventListener('DOMContentLoaded', initNav);

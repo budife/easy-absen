@@ -2,97 +2,10 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Easy Absen — Settings</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=19">
-  <script src="libs/xlsx.full.min.js"></script>
+  <meta http-equiv="refresh" content="0;url=index.html#settings">
+  <title>Redirecting...</title>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="sidebar-brand">Easy <span>Absen</span></div>
-      <ul class="sidebar-nav">
-        <li><a href="index.html">Ringkasan</a></li>
-        <li><a href="input.html">Catat Lembur</a></li>
-        <li><a href="kalender.html">Kalender</a></li>
-        <li><a href="riwayat.html">Riwayat</a></li>
-        <li><a href="import.html">Import/Export</a></li>
-        <li><a href="settings.html">Settings</a></li>
-      </ul>
-    </aside>
-    <main class="main">
-      <div class="page-header"><h1>Settings</h1></div>
-
-      <div class="card">
-        <form onsubmit="saveSettingsForm(event)">
-          <div class="form-group">
-            <label>Nama Line Manager</label>
-            <input type="text" id="managerName" class="form-control" placeholder="Nama Anda">
-          </div>
-          <div class="form-group">
-            <label>Gaji Pokok per Bulan (Rp)</label>
-            <input type="number" id="baseSalary" class="form-control" placeholder="5000000">
-            <small style="color:var(--text-muted);">Digunakan untuk hitung uang lembur otomatis</small>
-          </div>
-          <div class="form-group">
-            <label>Jam Kerja Normal per Hari</label>
-            <input type="number" id="workHours" class="form-control" value="8">
-          </div>
-          <button type="submit" class="btn btn-primary">Simpan</button>
-        </form>
-      </div>
-
-      <div class="card" style="margin-top:24px;">
-        <h3 style="margin-bottom:12px;">Info Rumus Uang Lembur</h3>
-        <p style="color:var(--text-muted);font-size:0.85rem;">
-          <strong>Weekday:</strong> Jam 1 = 1.5×, Jam 2+ = 2× (gaji/jam = gaji pokok ÷ 173)<br>
-          <strong>Weekend/Holiday:</strong> Jam 1-7 = 2×, Jam 8 = 3×, Jam 9+ = 4×<br>
-          <br>
-          Gaji per jam = Gaji Pokok ÷ 173 (standar Indonesia)
-        </p>
-      </div>
-
-      <div class="card" style="margin-top:24px;">
-        <h3 style="margin-bottom:12px;">Danger Zone</h3>
-        <button class="btn btn-danger btn-sm" onclick="clearAllData()">Hapus Semua Data</button>
-        <p style="color:var(--text-muted);font-size:0.8rem;margin-top:8px;">Menghapus semua data lembur dari browser ini. Tidak bisa dibatalkan.</p>
-      </div>
-    </main>
-  </div>
-
-  <script src="js/app.js"></script>
-  <script>
-    function loadSettings() {
-      const s = getSettings();
-      document.getElementById('managerName').value = s.managerName || '';
-      document.getElementById('baseSalary').value = s.baseSalary || '';
-      document.getElementById('workHours').value = s.workHours || 8;
-    }
-
-    function saveSettingsForm(e) {
-      e.preventDefault();
-      const settings = {
-        managerName: document.getElementById('managerName').value.trim(),
-        baseSalary: parseFloat(document.getElementById('baseSalary').value) || 0,
-        workHours: parseInt(document.getElementById('workHours').value) || 8
-      };
-      saveSettings(settings);
-      showToast('Settings disimpan', 'success');
-    }
-
-    function clearAllData() {
-      if (!confirm('Hapus SEMUA data? Tidak bisa dibatalkan!')) return;
-      if (!confirm('Yakin? Semua data lembur akan hilang.')) return;
-      localStorage.removeItem('ea_overtime');
-      localStorage.removeItem('ea_settings');
-      showToast('Semua data dihapus', 'success');
-      setTimeout(() => location.reload(), 1000);
-    }
-
-    loadSettings();
-  </script>
+  <script>window.location.replace('index.html#settings');</script>
 </body>
 </html>

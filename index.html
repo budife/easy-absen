@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Easy Absen — Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="libs/xlsx.full.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-brand">Easy <span>Absen</span></div>
+      <ul class="sidebar-nav">
+        <li><a href="index.html">Dashboard</a></li>
+        <li><a href="input.html">Input Lembur</a></li>
+        <li><a href="riwayat.html">Riwayat</a></li>
+        <li><a href="import.html">Import/Export</a></li>
+        <li><a href="karyawan.html">Karyawan</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+    </aside>
+    <main class="main">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <button class="btn btn-primary" onclick="location.href='input.html'">+ Input Lembur</button>
+      </div>
+
+      <div class="card-grid" id="stats"></div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="margin-bottom:12px;">Lembur per Bulan (6 bulan terakhir)</h3>
+        <div id="chart-monthly"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:24px;">
+        <h3 style="margin-bottom:12px;">Distribusi Kategori</h3>
+        <div id="chart-category"></div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px;">Top 5 Karyawan Lembur Bulan Ini</h3>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Nama</th><th>Total Jam</th><th>Jumlah Lembur</th></tr></thead>
+            <tbody id="top-employees"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script>
+    function renderDashboard() {
+      const employees = getEmployees();
+      const overtime = getOvertime();
+      const settings = getSettings();
+      const now = new Date();
+      const currentMonth = now.getFullYear() + String(now.getMonth()+1).padStart(2,'0');
+
+      // Filter this month
+      const thisMonth = overtime.filter(o => o.date && o.date.slice(0,6) === currentMonth);
+      const totalHours = thisMonth.reduce((s,o) => s + (o.totalHours||0), 0);
+      const uniqueEmp = new Set(thisMonth.map(o => o.employeeId)).size;
+      const avgHours = thisMonth.length ? (totalHours / thisMonth.length).toFixed(1) : 0;
+
+      document.getElementById('stats').innerHTML = `
+        <div class="card stat-card"><div class="value">${totalHours.toFixed(1)}</div><div class="label">Total Jam Bulan Ini</div></div>
+        <div class="card stat-card"><div class="value">${thisMonth.length}</div><div class="label">Jumlah Lembur</div></div>
+        <div class="card stat-card"><div class="value">${uniqueEmp}</div><div class="label">Karyawan Lembur</div></div>
+        <div class="card stat-card"><div class="value">${avgHours}</div><div class="label">Rata-rata Jam/Lembur</div></div>
+      `;
+
+      // Monthly chart (last 6 months)
+      const months = [];
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = d.getFullYear() + String(d.getMonth()+1).padStart(2,'0');
+        const label = d.toLocaleString('id-ID', { month: 'short', year: '2-digit' });
+        const hours = overtime.filter(o => o.date && o.date.slice(0,6) === key).reduce((s,o) => s + (o.totalHours||0), 0);
+        months.push({ label, hours });
+      }
+      const maxH = Math.max(...months.map(m => m.hours), 1);
+      document.getElementById('chart-monthly').innerHTML = months.map(m => `
+        <div class="chart-bar">
+          <div class="label">${m.label}</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${(m.hours/maxH*100)}%"></div></div>
+          <div class="value">${m.hours.toFixed(1)}j</div>
+        </div>
+      `).join('');
+
+      // Category chart
+      const cats = { weekday: 0, weekend: 0, holiday: 0 };
+      thisMonth.forEach(o => { cats[o.category] = (cats[o.category]||0) + (o.totalHours||0); });
+      const catTotal = Object.values(cats).reduce((a,b) => a+b, 0) || 1;
+      const catLabels = { weekday: 'Hari Kerja', weekend: 'Akhir Pekan', holiday: 'Libur' };
+      document.getElementById('chart-category').innerHTML = Object.entries(cats).map(([k,v]) => `
+        <div class="chart-bar">
+          <div class="label">${catLabels[k]}</div>
+          <div class="bar-bg"><div class="bar-fill" style="width:${(v/catTotal*100)}%;background:${k==='weekday'?'#2563eb':k==='weekend'?'#f59e0b':'#ec4899'}"></div></div>
+          <div class="value">${v.toFixed(1)}j</div>
+        </div>
+      `).join('');
+
+      // Top employees
+      const empHours = {};
+      thisMonth.forEach(o => {
+        const name = (employees.find(e => e.id === o.employeeId) || {}).name || o.employeeName || 'Unknown';
+        if (!empHours[name]) empHours[name] = { hours: 0, count: 0 };
+        empHours[name].hours += o.totalHours || 0;
+        empHours[name].count++;
+      });
+      const sorted = Object.entries(empHours).sort((a,b) => b[1].hours - a[1].hours).slice(0,5);
+      document.getElementById('top-employees').innerHTML = sorted.length
+        ? sorted.map(([name, d]) => `<tr><td>${name}</td><td>${d.hours.toFixed(1)}</td><td>${d.count}</td></tr>`).join('')
+        : '<tr><td colspan="3" class="empty-state">Belum ada data bulan ini</td></tr>';
+    }
+
+    renderDashboard();
+  </script>
+</body>
+</html>

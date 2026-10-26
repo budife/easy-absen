@@ -52,6 +52,7 @@ body {
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;
 }
+.sidebar-brand span { color: var(--accent); }
 
 .sidebar-nav { list-style: none; }
 

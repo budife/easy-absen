@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=29">
+  <link rel="stylesheet" href="css/style.css?v=30">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -15,7 +15,16 @@
     .view { display: none; }
     .view.active { display: block; }
     .sidebar-nav a { cursor: pointer; }
-  </style>
+  
+/* Nav icons */
+.nav-icon { font-size: 1.1rem; line-height: 1; }
+.nav-label { font-size: 0.7rem; }
+@media (min-width: 769px) {
+  .nav-icon { display: none; }
+  .nav-label { font-size: 14px; }
+  .sidebar-nav li a { flex-direction: row; gap: 0; }
+}
+</style>
 </head>
 <body>
   <div class="app">

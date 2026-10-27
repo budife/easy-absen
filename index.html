@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Easy Absen</title>
+  <title>Lembur</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=27">
+  <link rel="stylesheet" href="css/style.css?v=28">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -20,7 +20,7 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="sidebar-brand">Easy <span>Absen</span></div>
+      <div class="sidebar-brand">Lembur</div>
       <ul class="sidebar-nav">
         <li><a href="#ringkasan" data-view="ringkasan">Ringkasan</a></li>
         <li><a href="#catat" data-view="catat">Catat Lembur</a></li>
@@ -64,7 +64,7 @@
     });
     // Update title
     const titles = { ringkasan: 'Ringkasan', catat: 'Catat Lembur', kalender: 'Kalender Lembur', riwayat: 'Riwayat Lembur', import: 'Import/Export', settings: 'Settings' };
-    document.title = 'Easy Absen — ' + (titles[viewName] || viewName);
+    document.title = 'Lembur — ' + (titles[viewName] || viewName);
     // Render view content
     if (views[viewName]) views[viewName](viewEl);
     currentView = viewName;

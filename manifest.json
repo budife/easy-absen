@@ -1,6 +1,6 @@
 {
-  "name": "Easy Absen",
-  "short_name": "Easy Absen",
+  "name": "Lembur",
+  "short_name": "Lembur",
   "description": "Tracker lembur pribadi",
   "start_url": "./",
   "display": "standalone",

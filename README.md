@@ -1,4 +1,4 @@
-# Easy Absen
+# Lembur
 
 Aplikasi web sederhana untuk tracking lemburan (overtime) karyawan. Input lembur, lihat rekap, import/export ke xlsx.
 

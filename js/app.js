@@ -1,4 +1,4 @@
-// Easy Absen — Shared App Logic
+// Lembur — Shared App Logic
 // Data stored in localStorage
 
 const STORAGE_KEYS = {

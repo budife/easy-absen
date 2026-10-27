@@ -1,4 +1,4 @@
-const CACHE_NAME = 'easy-absen-v1';
+const CACHE_NAME = 'lembur-v1';
 const ASSETS = [
   './',
   './index.html',

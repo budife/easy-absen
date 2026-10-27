@@ -1,51 +1,43 @@
 # Lemboor
 
-Aplikasi web sederhana untuk tracking lemburan (overtime) karyawan. Input lembur, lihat rekap, import/export ke xlsx.
+Aplikasi web untuk tracking lembur pribadi. Catat lembur, lihat rekap, kalender, dan backup/restore data.
+
+Live: https://budife.github.io/lemboor/
 
 ## Fitur
 
-- **Dashboard** — ringkasan total jam, jumlah lembur, karyawan aktif, chart per bulan & kategori
-- **Input Lemboor** — form input dengan auto-hitung total jam & estimasi uang lembur
-- **Riwayat** — tabel filterable/sortable, edit, hapus, export filtered
-- **Import/Export** — import dari xlsx (template), export semua/filtered, backup/restore JSON
-- **Karyawan** — CRUD karyawan
-- **Settings** — gaji pokok, nama manager, rumus uang lembur (Indonesia)
+- **Ringkasan** — total jam bulan ini, jumlah lembur, rata-rata, total uang, chart per bulan & kategori
+- **Catat Lembur** — form input dengan auto-hitung total jam & estimasi uang lembur, validasi duplikat & overlap
+- **Kalender** — tampilan bulan & minggu, navigasi, hari ini ditandai
+- **Riwayat** — tabel filterable, hapus dengan undo, pagination
+- **Import/Export** — backup/restore JSON, import/export XLSX
+- **Settings** — nama manager, gaji pokok, jam kerja, rumus uang lembur
 
 ## Tech Stack
 
 - Vanilla HTML/CSS/JS (no build step)
 - SheetJS (xlsx) — bundled offline di `libs/`
 - Data disimpan di **localStorage** browser (per-device)
-- Static site — bisa di-deploy ke GitHub Pages
+- Static site — deploy ke GitHub Pages
+- PWA (manifest + service worker)
 
 ## Cara Pakai
 
-1. Buka `index.html` di browser
-2. Tambah karyawan di menu **Karyawan**
-3. Set gaji pokok di **Settings**
-4. Input lembur di **Input Lemboor**
-5. Lihat rekap di **Dashboard** dan **Riwayat**
-6. Backup data via **Import/Export** → Export/Backup JSON atau XLSX
+1. Buka https://budife.github.io/lemboor/
+2. Set gaji pokok di **Settings**
+3. Input lembur di **Catat Lembur**
+4. Lihat rekap di **Ringkasan**, **Kalender**, **Riwayat**
+5. Backup data via **Import/Export** → Export JSON/XLSX
 
-## Import/Export XLSX
-
-Format kolom (header row):
-| Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lemboor |
-
-- Tanggal format: `YYYYMMDD` (contoh: 20261026)
-- Kategori: `weekday`, `weekend`, `holiday`
-
-## Rumus Uang Lemboor (Indonesia)
+## Rumus Uang Lembur (Indonesia)
 
 - Gaji per jam = Gaji Pokok ÷ 173
 - **Weekday:** Jam 1 = 1.5×, Jam 2+ = 2×
 - **Weekend/Holiday:** Jam 1-7 = 2×, Jam 8 = 3×, Jam 9+ = 4×
 
-## Deploy ke GitHub Pages
+## Deploy
 
-1. Push repo ke GitHub
-2. Settings → Pages → Source: main branch / root
-3. Akses via `https://<username>.github.io/easy-absen/`
+Static site — push ke GitHub, aktifkan Pages (main branch / root).
 
 ## License
 

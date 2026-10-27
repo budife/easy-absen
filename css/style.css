@@ -341,6 +341,7 @@ td { font-variant-numeric: tabular-nums; }
   display: inline-flex; 
   align-items: center; 
   justify-content: center; 
+  align-self: flex-start;
 }
 .day-num { font-weight: 500; font-size: 14px; margin-bottom: 2px; text-align: left; }
 .cal-event {

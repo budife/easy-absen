@@ -289,7 +289,7 @@ td { font-variant-numeric: tabular-nums; }
     padding-top: 20px;
   }
   .sidebar.open { left: 0; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
-  .sidebar-brand { display: block; padding-left: 24px; }
+  .sidebar-brand { display: block; padding-left: 24px; font-size: 20px; }
   .sidebar-nav {
     flex-direction: column;
     width: 100%;
@@ -301,7 +301,7 @@ td { font-variant-numeric: tabular-nums; }
     align-items: center;
     gap: 10px;
     padding: 14px 24px;
-    font-size: 15px;
+    font-size: 16px;
     text-align: left;
     border-left: 3px solid transparent;
     border-bottom: none;
@@ -314,7 +314,7 @@ td { font-variant-numeric: tabular-nums; }
     padding-left: 17px;
   }
   .nav-icon { display: none; }
-  .nav-label { font-size: 14px; }
+  .nav-label { font-size: 16px; }
   /* Backdrop */
   .sidebar-backdrop {
     display: none;

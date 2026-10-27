@@ -1,6 +1,5 @@
-const CACHE_NAME = 'lemboor-v2';
+const CACHE_NAME = "lemboor-v3";
 const ASSETS = [
-  './',
   './index.html',
   './css/style.css',
   './js/app.js',

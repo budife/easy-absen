@@ -262,6 +262,8 @@ td { font-variant-numeric: tabular-nums; }
     cursor: pointer;
     padding: 8px;
     z-index: 300;
+    position: sticky;
+    top: 0;
   }
   .hamburger span {
     display: block;

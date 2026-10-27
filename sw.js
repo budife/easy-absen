@@ -1,4 +1,4 @@
-const CACHE_NAME = "lemboor-v4";
+const CACHE_NAME = "lemboor-v5";
 const ASSETS = [
   './index.html',
   './css/style.css',

@@ -250,7 +250,7 @@ td { font-variant-numeric: tabular-nums; }
 @media (max-width: 768px) {
   /* Hamburger button */
   .hamburger {
-    display: flex;
+    display: flex !important;
     flex-direction: column;
     justify-content: center;
     gap: 4px;

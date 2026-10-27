@@ -100,12 +100,12 @@ function calcOvertimePay(totalHours, category, baseSalary) {
 }
 
 // --- Toast ---
-function showToast(msg, type = 'info') {
-  const toast = document.createElement('div');
-  toast.className = 'toast ' + type;
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+function toast(msg, type = 'info') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
 }
 
 // --- Navigation ---

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=37">
+  <link rel="stylesheet" href="css/style.css?v=38">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -794,19 +794,8 @@ function saveDraft() {
   }
   </script>
   <script>
-  window.addEventListener('error', function(e) {
-    console.error('Global error:', e.message, e.filename, e.lineno, e.colno);
-    // Show error on page for debugging
-    const debugEl = document.createElement('div');
-    debugEl.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#ff4444;color:white;padding:8px;font-size:12px;z-index:9999;word-break:break-all;';
-    debugEl.textContent = 'ERROR: ' + e.message + ' (line ' + e.lineno + ')';
-    document.body.appendChild(debugEl);
-  });
-  window.addEventListener('unhandledrejection', function(e) {
-    console.error('Unhandled promise rejection:', e.reason);
-  });
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW registration failed:', err));
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   }
   </script>
 </body>

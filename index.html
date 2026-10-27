@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=31">
+  <link rel="stylesheet" href="css/style.css?v=32">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -27,8 +27,9 @@
 </style>
 </head>
 <body>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
   <div class="app">
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">Lemboor</div>
       <ul class="sidebar-nav">
         <li><a href="#ringkasan" data-view="ringkasan"><span class="nav-icon">📊</span><span class="nav-label">Ringkasan</span></a></li>
@@ -40,6 +41,9 @@
       </ul>
     </aside>
     <main class="main" id="mainContent">
+      <button class="hamburger" id="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
       <!-- Views injected here -->
     </main>
   </div>
@@ -753,6 +757,34 @@ function saveDraft() {
     const hash = location.hash.replace('#', '') || 'ringkasan';
     navigateTo(hash);
   })();
+
+  // --- Sidebar toggle (mobile) ---
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const bd = document.getElementById('sidebarBackdrop');
+    const hb = document.getElementById('hamburger');
+    if (sb.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      sb.classList.add('open');
+      bd.classList.add('open');
+      hb.classList.add('open');
+    }
+  }
+  function closeSidebar() {
+    const sb = document.getElementById('sidebar');
+    const bd = document.getElementById('sidebarBackdrop');
+    const hb = document.getElementById('hamburger');
+    if (sb) sb.classList.remove('open');
+    if (bd) bd.classList.remove('open');
+    if (hb) hb.classList.remove('open');
+  }
+  // Close sidebar when nav link clicked on mobile
+  document.querySelectorAll('.sidebar-nav a').forEach(a => {
+    a.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
 
   function formatDateDisplay(yyyymmdd) {
     if (!yyyymmdd || yyyymmdd.length !== 8) return yyyymmdd;

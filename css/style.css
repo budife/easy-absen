@@ -13,6 +13,9 @@
   --accent-hover: #6a5f4d;
   --danger: #b85c4a;
   --success: #5a7a52;
+  --cat-weekday: #6b7fa3;
+  --cat-weekend: #b8956a;
+  --cat-holiday: #a37a8f;
   --radius: 8px;
   --radius-sm: 4px;
 }

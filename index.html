@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=41">
+  <link rel="stylesheet" href="css/style.css?v=42">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -332,7 +332,7 @@
     document.getElementById('chart-category').innerHTML = hasCatData ? Object.entries(cats).map(([k,v]) => `
       <div class="chart-bar">
         <div class="label">${catLabels[k]}</div>
-        <div class="bar-bg"><div class="bar-fill" style="width:${(v/catTotal*100)}%;background:${k==='weekday'?'#2563eb':k==='weekend'?'#f59e0b':'#ec4899'}"></div></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${(v/catTotal*100)}%;background:var(--cat-${k==='weekday'?'weekday':k==='weekend'?'weekend':'holiday'})"></div></div>
         <div class="value">${v.toFixed(1)}j</div>
       </div>
     `).join('') : '<div class="empty-state">Belum ada data kategori bulan ini.</div>';
@@ -639,8 +639,8 @@ function saveDraft() {
         <td>${o.startTime}-${o.endTime}</td>
         <td>${(o.totalHours||0).toFixed(2)}</td>
         <td><span class="badge ${badgeClass[o.category]}">${catLabels[o.category]||o.category}</span></td>
-        <td>${o.activity||'-'}</td>
-        <td>${o.project||'-'}</td>
+        <td>${esc(o.activity)||'-'}</td>
+        <td>${esc(o.project)||'-'}</td>
         <td>${o.pay ? 'Rp ' + o.pay.toLocaleString('id-ID') : '-'}</td>
         <td><button class="btn btn-danger btn-sm" onclick="deleteEntry('${o.id}')">Hapus</button></td>
       </tr>
@@ -696,6 +696,7 @@ function saveDraft() {
   function importData() {
     const file = document.getElementById('importFile').files[0];
     if (!file) { toast('Pilih file dulu', 'error'); return; }
+    if (!confirm('Import akan menambahkan data ke data yang ada. Lanjutkan?')) return;
     const reader = new FileReader();
     reader.onload = function(e) {
       const wb = XLSX.read(e.target.result, { type: 'binary' });
@@ -721,6 +722,7 @@ function saveDraft() {
   function importJson(event) {
     const file = event.target.files[0];
     if (!file) return;
+    if (!confirm('Import JSON akan menimpa data yang ada. Lanjutkan?')) { event.target.value = ''; return; }
     const reader = new FileReader();
     reader.onload = function(e) {
       try {
@@ -738,7 +740,10 @@ function saveDraft() {
   document.addEventListener('keydown', function(e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
     if (e.key === 'n' || e.key === 'N') { navigateTo('catat'); }
-    else if (e.key === 'Escape') { document.querySelectorAll('.modal-overlay').forEach(m => m.remove()); }
+    else if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+      if (window.innerWidth <= 768) closeSidebar();
+    }
     else if (e.key === 'ArrowLeft' && currentView === 'kalender') { prevPeriod(); }
     else if (e.key === 'ArrowRight' && currentView === 'kalender') { nextPeriod(); }
   });

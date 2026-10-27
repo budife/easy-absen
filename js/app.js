@@ -13,6 +13,28 @@ const DEFAULT_SETTINGS = {
   workHours: 8
 };
 
+// --- Custom confirm modal (reliable on mobile) ---
+function customConfirm(msg) {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = '<div class="modal"><p style="margin-bottom:16px;">' + esc(msg) + '</p><div style="display:flex;gap:8px;justify-content:flex-end;"><button class="btn btn-outline" id="cc-cancel">Batal</button><button class="btn btn-primary" id="cc-ok">OK</button></div></div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#cc-ok').onclick = () => { overlay.remove(); resolve(true); };
+    overlay.querySelector('#cc-cancel').onclick = () => { overlay.remove(); resolve(false); };
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) { overlay.remove(); resolve(false); } });
+  });
+}
+function safeConfirm(msg) {
+  try {
+    const result = confirm(msg);
+    if (result === undefined || result === null) return true;
+    return result;
+  } catch (e) {
+    return true;
+  }
+}
+
 // --- HTML escape ---
 function esc(s) {
   if (s == null) return '';

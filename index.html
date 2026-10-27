@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=43">
+  <link rel="stylesheet" href="css/style.css?v=44">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -392,7 +392,7 @@
         });
         if (overlap) { toast('Waktu bertabrakan dengan lembur lain pada tanggal yang sama', 'error'); return; }
         // Confirmation
-        if (!confirm(`Simpan lembur ${startTime}-${endTime} pada ${date}?`)) return;
+        if (!safeConfirm(`Simpan lembur ${startTime}-${endTime} pada ${date}?`)) return;
         const entry = {
           id: genId(),
           date: date.replace(/-/g,''),
@@ -655,7 +655,7 @@ function saveDraft() {
     if (pag) pag.innerHTML = pagHtml;
   }
   function deleteEntry(id) {
-    if (!confirm('Hapus data ini?')) return;
+    if (!safeConfirm('Hapus data ini?')) return;
     const data = getOvertime();
     const deleted = data.find(o => o.id === id);
     const newData = data.filter(o => o.id !== id);
@@ -683,7 +683,7 @@ function saveDraft() {
     toast('Settings disimpan', 'success');
   }
   function clearAllData() {
-    if (!confirm('Hapus semua data lembur? Tindakan ini tidak bisa dibatalkan.')) return;
+    if (!safeConfirm('Hapus semua data lembur? Tindakan ini tidak bisa dibatalkan.')) return;
     saveOvertime([]);
     toast('Semua data dihapus', 'success');
     navigateTo('ringkasan');
@@ -702,7 +702,7 @@ function saveDraft() {
   function importData() {
     const file = document.getElementById('importFile').files[0];
     if (!file) { toast('Pilih file dulu', 'error'); return; }
-    if (!confirm('Import akan menambahkan data ke data yang ada. Lanjutkan?')) return;
+    if (!safeConfirm('Import akan menambahkan data ke data yang ada. Lanjutkan?')) return;
     const reader = new FileReader();
     reader.onload = function(e) {
       const wb = XLSX.read(e.target.result, { type: 'binary' });
@@ -728,7 +728,7 @@ function saveDraft() {
   function importJson(event) {
     const file = event.target.files[0];
     if (!file) return;
-    if (!confirm('Import JSON akan menimpa data yang ada. Lanjutkan?')) { event.target.value = ''; return; }
+    if (!safeConfirm('Import JSON akan menimpa data yang ada. Lanjutkan?')) { event.target.value = ''; return; }
     const reader = new FileReader();
     reader.onload = function(e) {
       try {

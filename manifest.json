@@ -1,6 +1,6 @@
 {
-  "name": "Lembur",
-  "short_name": "Lembur",
+  "name": "Lemboor",
+  "short_name": "Lemboor",
   "description": "Tracker lembur pribadi",
   "start_url": "./",
   "display": "standalone",

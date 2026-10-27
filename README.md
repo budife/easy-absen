@@ -1,11 +1,11 @@
-# Lembur
+# Lemboor
 
 Aplikasi web sederhana untuk tracking lemburan (overtime) karyawan. Input lembur, lihat rekap, import/export ke xlsx.
 
 ## Fitur
 
 - **Dashboard** — ringkasan total jam, jumlah lembur, karyawan aktif, chart per bulan & kategori
-- **Input Lembur** — form input dengan auto-hitung total jam & estimasi uang lembur
+- **Input Lemboor** — form input dengan auto-hitung total jam & estimasi uang lembur
 - **Riwayat** — tabel filterable/sortable, edit, hapus, export filtered
 - **Import/Export** — import dari xlsx (template), export semua/filtered, backup/restore JSON
 - **Karyawan** — CRUD karyawan
@@ -23,19 +23,19 @@ Aplikasi web sederhana untuk tracking lemburan (overtime) karyawan. Input lembur
 1. Buka `index.html` di browser
 2. Tambah karyawan di menu **Karyawan**
 3. Set gaji pokok di **Settings**
-4. Input lembur di **Input Lembur**
+4. Input lembur di **Input Lemboor**
 5. Lihat rekap di **Dashboard** dan **Riwayat**
 6. Backup data via **Import/Export** → Export/Backup JSON atau XLSX
 
 ## Import/Export XLSX
 
 Format kolom (header row):
-| Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lembur |
+| Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lemboor |
 
 - Tanggal format: `YYYYMMDD` (contoh: 20261026)
 - Kategori: `weekday`, `weekend`, `holiday`
 
-## Rumus Uang Lembur (Indonesia)
+## Rumus Uang Lemboor (Indonesia)
 
 - Gaji per jam = Gaji Pokok ÷ 173
 - **Weekday:** Jam 1 = 1.5×, Jam 2+ = 2×

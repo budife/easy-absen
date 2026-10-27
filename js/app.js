@@ -1,4 +1,4 @@
-// Lembur — Shared App Logic
+// Lemboor — Shared App Logic
 // Data stored in localStorage
 
 const STORAGE_KEYS = {
@@ -139,14 +139,14 @@ function closeModal() {
 // --- Export to XLSX ---
 function exportToXlsx(data, filename) {
   const ws = XLSX.utils.json_to_sheet(data, { header: [
-    'Nama', 'Tanggal', 'Jam Mulai', 'Jam Selesai', 'Total Jam', 'Aktivitas', 'Project', 'Kategori', 'Gaji Pokok', 'Uang Lembur'
+    'Nama', 'Tanggal', 'Jam Mulai', 'Jam Selesai', 'Total Jam', 'Aktivitas', 'Project', 'Kategori', 'Gaji Pokok', 'Uang Lemboor'
   ]});
   // Set column widths
   ws['!cols'] = [
     {wch: 20}, {wch: 12}, {wch: 10}, {wch: 10}, {wch: 10}, {wch: 40}, {wch: 20}, {wch: 12}, {wch: 12}, {wch: 12}
   ];
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Lembur');
+  XLSX.utils.book_append_sheet(wb, ws, 'Lemboor');
   XLSX.writeFile(wb, filename || 'lembur-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '.xlsx');
 }
 
@@ -190,7 +190,7 @@ function prepareExportDataSimple(overtimeList) {
     'Project': o.project,
     'Kategori': o.category,
     'Gaji Pokok': o.baseSalary || 0,
-    'Uang Lembur': o.pay || 0
+    'Uang Lemboor': o.pay || 0
   }));
 }
 

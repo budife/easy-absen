@@ -62,7 +62,7 @@ Pain point yang diselesaikan:
 | department | TEXT | divisi |
 | created_at | DATETIME | |
 
-### Overtime (Lembur)
+### Overtime (Lemboor)
 | Field | Type | Notes |
 |-------|------|-------|
 | id | INTEGER PK | auto |
@@ -90,7 +90,7 @@ Pain point yang diselesaikan:
 ### Kolom (header row):
 | A | B | C | D | E | F | G | H | I | J |
 |---|---|---|---|---|---|---|---|---|---|
-| Nama | Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lembur |
+| Nama | Tanggal | Jam Mulai | Jam Selesai | Total Jam | Aktivitas | Project | Kategori | Gaji Pokok | Uang Lemboor |
 
 - Format tanggal: `YYYYMMDD` (contoh: 20261026)
 - **Import:** parse xlsx, validasi kolom, insert ke localStorage (skip duplikat berdasarkan nama+tanggal+jam mulai)
@@ -101,7 +101,7 @@ Pain point yang diselesaikan:
 - `weekend` (akhir pekan)
 - `holiday` (libur nasional)
 
-### Rumus Uang Lembur (Indonesia — UU Ketenagakerjaan):
+### Rumus Uang Lemboor (Indonesia — UU Ketenagakerjaan):
 - Gaji per jam = Gaji Pokok / 173 (standar)
 - **Weekday:**
   - Jam 1: 1.5 × gaji per jam
@@ -123,13 +123,13 @@ Pain point yang diselesaikan:
 - Chart: pie chart distribusi kategori
 - Tabel: top 5 karyawan lembur terbanyak bulan ini
 
-### 8.2 Input Lembur
+### 8.2 Input Lemboor
 - Form: pilih karyawan (dropdown), tanggal (date picker), jam mulai (time), jam selesai (time), aktivitas (textarea), project (text), kategori (select)
 - Auto-calculate total jam saat jam selesai diisi
 - Validasi: jam selesai > jam mulai, tanggal tidak future
 - Submit → insert ke DB, reset form
 
-### 8.3 Riwayat Lembur
+### 8.3 Riwayat Lemboor
 - Tabel: Nama, Tanggal, Jam, Total, Aktivitas, Project, Kategori, Status
 - Filter: tanggal range, karyawan, project, kategori, status
 - Sort: by tanggal, nama, total jam

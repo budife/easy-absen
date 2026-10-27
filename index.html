@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lembur</title>
+  <title>Lemboor</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=28">
+  <link rel="stylesheet" href="css/style.css?v=29">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -20,10 +20,10 @@
 <body>
   <div class="app">
     <aside class="sidebar">
-      <div class="sidebar-brand">Lembur</div>
+      <div class="sidebar-brand">Lemboor</div>
       <ul class="sidebar-nav">
         <li><a href="#ringkasan" data-view="ringkasan">Ringkasan</a></li>
-        <li><a href="#catat" data-view="catat">Catat Lembur</a></li>
+        <li><a href="#catat" data-view="catat">Catat Lemboor</a></li>
         <li><a href="#kalender" data-view="kalender">Kalender</a></li>
         <li><a href="#riwayat" data-view="riwayat">Riwayat</a></li>
         <li><a href="#import" data-view="import">Import/Export</a></li>
@@ -63,8 +63,8 @@
       a.classList.toggle('active', a.dataset.view === viewName);
     });
     // Update title
-    const titles = { ringkasan: 'Ringkasan', catat: 'Catat Lembur', kalender: 'Kalender Lembur', riwayat: 'Riwayat Lembur', import: 'Import/Export', settings: 'Settings' };
-    document.title = 'Lembur — ' + (titles[viewName] || viewName);
+    const titles = { ringkasan: 'Ringkasan', catat: 'Catat Lemboor', kalender: 'Kalender Lemboor', riwayat: 'Riwayat Lemboor', import: 'Import/Export', settings: 'Settings' };
+    document.title = 'Lemboor — ' + (titles[viewName] || viewName);
     // Render view content
     if (views[viewName]) views[viewName](viewEl);
     currentView = viewName;
@@ -87,11 +87,11 @@
     container.innerHTML = `
       <div class="page-header">
         <h1>Ringkasan</h1>
-        <button class="btn btn-primary" onclick="navigateTo('catat')">+ Catat Lembur</button>
+        <button class="btn btn-primary" onclick="navigateTo('catat')">+ Catat Lemboor</button>
       </div>
       <div class="card-grid" id="stats"></div>
       <div class="card">
-        <h3 style="margin-bottom:12px;">Lembur per Bulan</h3>
+        <h3 style="margin-bottom:12px;">Lemboor per Bulan</h3>
         <div id="chart-monthly"></div>
       </div>
       <div class="card" style="margin-top:24px;">
@@ -103,11 +103,11 @@
   });
   </script>
 
-  <!-- View: Catat Lembur -->
+  <!-- View: Catat Lemboor -->
   <script>
   registerView('catat', function(container) {
     container.innerHTML = `
-      <div class="page-header"><h1>Catat Lembur</h1></div>
+      <div class="page-header"><h1>Catat Lemboor</h1></div>
       <div class="card">
         <form id="overtimeForm">
           <div class="form-row">
@@ -169,7 +169,7 @@
   <script>
   registerView('kalender', function(container) {
     container.innerHTML = `
-      <div class="page-header"><h1>Kalender Lembur</h1></div>
+      <div class="page-header"><h1>Kalender Lemboor</h1></div>
       <div class="cal-toolbar">
         <div style="display:flex;align-items:center;gap:12px;">
           <div class="cal-nav">
@@ -196,7 +196,7 @@
   <script>
   registerView('riwayat', function(container) {
     container.innerHTML = `
-      <div class="page-header"><h1>Riwayat Lembur</h1></div>
+      <div class="page-header"><h1>Riwayat Lemboor</h1></div>
       <div class="filter-bar">
         <select class="form-control" id="filterMonth" onchange="renderRiwayat()"></select>
         <select class="form-control" id="filterCat" onchange="renderRiwayat()">
@@ -290,9 +290,9 @@
     const totalHours = thisMonth.reduce((s,o) => s + (o.totalHours||0), 0);
     document.getElementById('stats').innerHTML = `
       <div class="card stat-card"><div class="value">${totalHours.toFixed(1)}</div><div class="label">Total Jam Bulan Ini</div></div>
-      <div class="card stat-card"><div class="value">${thisMonth.length}</div><div class="label">Jumlah Lembur</div></div>
+      <div class="card stat-card"><div class="value">${thisMonth.length}</div><div class="label">Jumlah Lemboor</div></div>
       <div class="card stat-card"><div class="value">${totalHours > 0 ? (totalHours / thisMonth.length).toFixed(1) : 0}</div><div class="label">Rata-rata Jam</div></div>
-      <div class="card stat-card"><div class="value">${thisMonth.reduce((s,o) => s + (o.pay||0), 0).toLocaleString('id-ID')}</div><div class="label">Total Uang Lembur</div></div>
+      <div class="card stat-card"><div class="value">${thisMonth.reduce((s,o) => s + (o.pay||0), 0).toLocaleString('id-ID')}</div><div class="label">Total Uang Lemboor</div></div>
     `;
     const months = [];
     for (let i = 5; i >= 0; i--) {
@@ -368,7 +368,7 @@
         // Duplicate check
         const existing = getOvertime();
         const dup = existing.find(o => o.date === date.replace(/-/g,'') && o.startTime === startTime && o.endTime === endTime);
-        if (dup) { toast('Lembur dengan jam yang sama sudah ada', 'error'); return; }
+        if (dup) { toast('Lemboor dengan jam yang sama sudah ada', 'error'); return; }
         // Overlap check
         const sameDay = existing.filter(o => o.date === date.replace(/-/g,''));
         const overlap = sameDay.find(o => {
@@ -395,7 +395,7 @@
         data.push(entry);
         saveOvertime(data);
         localStorage.removeItem('ea_draft');
-        toast('Lembur berhasil dicatat', 'success');
+        toast('Lemboor berhasil dicatat', 'success');
         resetForm();
       };
     }

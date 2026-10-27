@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=42">
+  <link rel="stylesheet" href="css/style.css?v=43">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#7c6f5b">
   <script src="libs/xlsx.full.min.js"></script>
@@ -29,7 +29,7 @@
 <body>
   <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
   <div class="app">
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar" id="sidebar" role="navigation" aria-label="Menu utama">
       <div class="sidebar-brand">Lemboor</div>
       <ul class="sidebar-nav">
         <li><a href="#ringkasan" data-view="ringkasan"><span class="nav-icon">📊</span><span class="nav-label">Ringkasan</span></a></li>
@@ -74,6 +74,7 @@
     // Update sidebar active
     document.querySelectorAll('.sidebar-nav a').forEach(a => {
       a.classList.toggle('active', a.dataset.view === viewName);
+      a.setAttribute('aria-current', a.dataset.view === viewName ? 'page' : 'false');
     });
     // Update title
     const titles = { ringkasan: 'Ringkasan', catat: 'Catat Lembur', kalender: 'Kalender Lembur', riwayat: 'Riwayat Lembur', import: 'Import/Export', settings: 'Settings' };
@@ -655,9 +656,14 @@ function saveDraft() {
   }
   function deleteEntry(id) {
     if (!confirm('Hapus data ini?')) return;
-    const data = getOvertime().filter(o => o.id !== id);
-    saveOvertime(data);
-    toast('Data dihapus', 'success');
+    const data = getOvertime();
+    const deleted = data.find(o => o.id === id);
+    const newData = data.filter(o => o.id !== id);
+    saveOvertime(newData);
+    toast('Data dihapus', 'success', deleted ? {
+      label: 'Undo',
+      fn: () => { saveOvertime(getOvertime().concat([deleted])); toast('Dikembalikan', 'info'); renderRiwayat(); }
+    } : null);
     renderRiwayat();
   }
 

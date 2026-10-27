@@ -106,12 +106,29 @@ function calcOvertimePay(totalHours, category, baseSalary) {
 }
 
 // --- Toast ---
-function toast(msg, type = 'info') {
+function toast(msg, type = 'info', action = null) {
   const el = document.createElement('div');
   el.className = 'toast ' + type;
-  el.textContent = msg;
+  el.style.display = 'flex';
+  el.style.alignItems = 'center';
+  el.style.gap = '12px';
+  const text = document.createElement('span');
+  text.textContent = msg;
+  el.appendChild(text);
+  if (action) {
+    const btn = document.createElement('button');
+    btn.textContent = action.label;
+    btn.style.cssText = 'background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:inherit;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:13px;';
+    btn.onclick = action.fn;
+    el.appendChild(btn);
+  }
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
+  const timer = setTimeout(() => el.remove(), 5000);
+  if (action) {
+    const btn = el.querySelector('button');
+    btn.onclick = () => { action.fn(); clearTimeout(timer); el.remove(); };
+  }
+  return el;
 }
 
 // --- Navigation ---
